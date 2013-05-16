@@ -1,7 +1,7 @@
 #include <Adafruit_GFX.h>
 #include <Max72xxPanel.h>
 
-Max72xxPanel matrix = Max72xxPanel(12, 11, 10);
+Max72xxPanel matrix = Max72xxPanel(12, 11, 10); // DIN pin, CLK pin, CS pin
 
 void setup() {
   matrix.setIntensity(15);

@@ -1,10 +1,10 @@
 #include <Adafruit_GFX.h>
 #include <Max72xxPanel.h>
 
-Max72xxPanel matrix = Max72xxPanel(12, 11, 10);
+Max72xxPanel matrix = Max72xxPanel(12, 11, 10); // DIN pin, CLK pin, CS pin
 
 String tape = "Arduino";
-int wait = 200; // in milli seconds
+int wait = 200; // In milliseconds
 
 int spacer = 1;
 int width = 5 + spacer; // Our font is 5 pixel width

@@ -1,11 +1,11 @@
 #include <Adafruit_GFX.h>
 #include <Max72xxPanel.h>
 
-Max72xxPanel matrix = Max72xxPanel(12, 11, 10);
+Max72xxPanel matrix = Max72xxPanel(12, 11, 10); // DIN pin, CLK pin, CS pin
 
 const int pinRandom = A0;
 
-const int wait = 100; // in milli seconds
+const int wait = 100; // In milliseconds
 const int length = 8;
 
 int x[length], y[length];
@@ -20,8 +20,7 @@ void setup() {
   }
   nextPtr = 0;
 
-  // Initialize random generator
-  randomSeed(analogRead(pinRandom));
+  randomSeed(analogRead(pinRandom)); // Initialize random generator
 }
 
 void loop() {
