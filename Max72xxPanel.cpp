@@ -89,7 +89,7 @@ void Max72xxPanel::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color
     else {
       buffer[x] &= ~val;
     }
-    spiTransfer(x % 8 + 1, buffer[x], x / 8);
+    spiTransfer(OP_DIGIT0 + x % 8, buffer[x], x / 8);
   }
 }
 
@@ -117,9 +117,9 @@ void Max72xxPanel::doubleBuffering(boolean enabled) {
       // Enable the line 
       digitalWrite(SPI_CS, LOW);
 
-      for ( int x = hDisplays * vDisplays - 1; x >= 0; x-- ) {
+      for ( int i = hDisplays * vDisplays - 1; i >= 0; i-- ) {
         shiftOut(SPI_MOSI, SPI_CLK, MSBFIRST, OP_DIGIT0 + d);
-        shiftOut(SPI_MOSI, SPI_CLK, MSBFIRST, buffer[x * 8 + d]);
+        shiftOut(SPI_MOSI, SPI_CLK, MSBFIRST, buffer[i * 8 + d]);
       }
 
       // Latch the data onto the display(s)
@@ -129,7 +129,8 @@ void Max72xxPanel::doubleBuffering(boolean enabled) {
 }
 
 void Max72xxPanel::spiTransfer(byte opcode, byte data, int displ) {
-
+  // If disp < 0, we send the byte of data to all displays
+  
   if ( ! doubleBuffer ) {
     // Enable the line 
     digitalWrite(SPI_CS, LOW);

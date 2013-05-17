@@ -1,7 +1,12 @@
 #include <Adafruit_GFX.h>
 #include <Max72xxPanel.h>
 
-Max72xxPanel matrix = Max72xxPanel(12, 11, 10); // DIN pin, CLK pin, CS pin
+int pinDIN = 12;
+int pinClk = 13;
+int pinCS = 10;
+int numberOfHorizontalDisplays = 1;
+
+Max72xxPanel matrix = Max72xxPanel(pinDIN, pinClk, pinCS, numberOfHorizontalDisplays);
 
 int pinRandom = A0;
 
@@ -26,8 +31,8 @@ void loop() {
   
   do {
     switch ( random(4) ) {
-      case 0: xNext = constrain(x + 1, 0, 7); yNext = y; break;
-      case 1: xNext = constrain(x - 1, 0, 7); yNext = y; break;
+      case 0: xNext = constrain(x + 1, 0, numberOfHorizontalDisplays * 8 - 1); yNext = y; break;
+      case 1: xNext = constrain(x - 1, 0, numberOfHorizontalDisplays * 8 - 1); yNext = y; break;
       case 2: yNext = constrain(y + 1, 0, 7); xNext = x; break;
       case 3: yNext = constrain(y - 1, 0, 7); xNext = x; break;
     }

@@ -1,7 +1,12 @@
 #include <Adafruit_GFX.h>
 #include <Max72xxPanel.h>
 
-Max72xxPanel matrix = Max72xxPanel(12, 11, 10); // DIN pin, CLK pin, CS pin
+int pinDIN = 12;
+int pinClk = 13;
+int pinCS = 10;
+int numberOfHorizontalDisplays = 1; // This example does not support other values then 1
+
+Max72xxPanel matrix = Max72xxPanel(pinDIN, pinClk, pinCS, numberOfHorizontalDisplays);
 
 String tape = "Arduino";
 int wait = 200; // In milliseconds
@@ -14,26 +19,27 @@ void setup() {
 }
 
 void loop() {
-  
-  for ( int i = 0 ; i < width * tape.length() + 7 - spacer; i++ ) {
-    
-    int letter = i / width;
-    int x = i % width;
-    
+
+  for ( int i = 0 ; i < width * tape.length() + numberOfHorizontalDisplays * 8 - 1 - spacer; i++ ) {
+
     matrix.doubleBuffering(true); // Prevent screen flicker
-    
+
     matrix.fillScreen(LOW);
-    
-    if ( letter < tape.length() ) {
-      matrix.drawChar(7 - x, 0, tape[letter], HIGH, LOW, 1);
-    }
-    
-    if ( letter > 0 ) {
-      matrix.drawChar(7 - x - width, 0, tape[letter - 1], HIGH, LOW, 1);
+
+    int letter = i / width;
+    int x = numberOfHorizontalDisplays * 8 - 1 - i % width;
+
+    while ( x + width - spacer >= 0 && letter >= 0 ) {
+      if ( letter < tape.length() ) {
+        matrix.drawChar(x, 0, tape[letter], HIGH, LOW, 1);
+      }
+
+      letter--;
+      x -= width;
     }
 
     matrix.doubleBuffering(false); // Send drawing to display
-    
+
     delay(wait);
   }
 }

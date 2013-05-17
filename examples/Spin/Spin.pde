@@ -1,10 +1,15 @@
 #include <Adafruit_GFX.h>
 #include <Max72xxPanel.h>
 
-Max72xxPanel matrix = Max72xxPanel(12, 11, 10); // DIN pin, CLK pin, CS pin
+int pinDIN = 12;
+int pinClk = 13;
+int pinCS = 10;
+int numberOfHorizontalDisplays = 1;
+
+Max72xxPanel matrix = Max72xxPanel(pinDIN, pinClk, pinCS, numberOfHorizontalDisplays);
 
 void setup() {
-  matrix.setIntensity(15);
+  matrix.setIntensity(0);
 }
 
 int wait = 50;
@@ -12,15 +17,15 @@ int inc = -2;
 
 void loop() {
   
-  for ( int i = 0; i < 7; i++ ) {
+  for ( int x = 0; x < 8 * numberOfHorizontalDisplays - 1; x++ ) {
     matrix.fillScreen(LOW);
-    matrix.drawLine(i, 0, 7 - i, 7, HIGH);
+    matrix.drawLine(x, 0, 8 * numberOfHorizontalDisplays - 1 - x, 7, HIGH);
     delay(wait);
   }
 
-  for ( int i = 0; i < 7; i++ ) {
+  for ( int y = 0; y < 7; y++ ) {
     matrix.fillScreen(LOW);
-    matrix.drawLine(7, i, 0, 7 - i, HIGH);
+    matrix.drawLine(8 * numberOfHorizontalDisplays - 1, y, 0, 7 - y, HIGH);
     delay(wait);
   }
   
