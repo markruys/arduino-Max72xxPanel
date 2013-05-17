@@ -1,10 +1,11 @@
+#include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Max72xxPanel.h>
 
-int pinDIN = 12;
-int pinClk = 13;
-int pinCS = 10;
+int pinCS = 10; // Attach CS to this pin, DIN to MOSI and CLK to SCK (cf http://arduino.cc/en/Reference/SPI )
 int numberOfHorizontalDisplays = 1;
+
+Max72xxPanel matrix = Max72xxPanel(pinCS, numberOfHorizontalDisplays);
 
 Max72xxPanel matrix = Max72xxPanel(pinDIN, pinClk, pinCS, numberOfHorizontalDisplays);
 
@@ -33,7 +34,7 @@ void loop() {
   // Shift pointer to the next segment
   ptr = nextPtr;
   nextPtr = next(ptr);
-  
+
   matrix.drawPixel(x[ptr], y[ptr], HIGH); // Draw the head of the snake
 
   delay(wait);
@@ -43,7 +44,7 @@ void loop() {
   }
 
   for ( int attempt = 0; attempt < 10; attempt++ ) {
-     
+
     // Jump at random one step up, down, left, or right
     switch ( random(4) ) {
     case 0: x[nextPtr] = constrain(x[ptr] + 1, 0, numberOfHorizontalDisplays * 8 - 1); y[nextPtr] = y[ptr]; break;
@@ -51,7 +52,7 @@ void loop() {
     case 2: y[nextPtr] = constrain(y[ptr] + 1, 0, 7); x[nextPtr] = x[ptr]; break;
     case 3: y[nextPtr] = constrain(y[ptr] - 1, 0, 7); x[nextPtr] = x[ptr]; break;
     }
-    
+
     if ( ! occupied(nextPtr) ) {
       break; // The spot is empty, break out the for loop
     }

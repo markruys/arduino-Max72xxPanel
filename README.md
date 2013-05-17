@@ -21,11 +21,14 @@ Place the [Max72xxPanel][download] and [Adafruit_GFX][gfx-download] library fold
 Features
 --------
 - Double buffering to prevent screen flicker. Check out ticker tape example for usage.
-- Multiple matrices in a horizontal layout, connected in cascade are supported (though untested.)
+- Support for multiple matrix displays in a horizontal layout, connected in cascade.
+- Uses the [SPI library][spi] to address the display(s).
+- Needs very little memory.
 
 [download]: https://github.com/markruys/arduino-Max72xxPanel/archive/master.zip "Download Max72xxPanel library"
 [gfx-download]: https://github.com/adafruit/Adafruit-GFX-Library "Download Adafruit GFX Graphics Library"
 [gfx-docs]: http://learn.adafruit.com/adafruit-gfx-graphics-library/overview "Documentation Adafruit GFX Graphics Library"
 [examples]: https://github.com/markruys/arduino-Max72xxPanel/tree/master/examples "Show Max72xxPanel examples"
 [hardware]: https://www.google.com/search?q=MAX7219+Red+Dot+Matrix+Module "For kits, google MAX7219 Red Dot Matrix Module"
+[spi]: http://arduino.cc/en/Reference/SPI "SPI library"
 
