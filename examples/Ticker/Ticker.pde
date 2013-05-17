@@ -4,7 +4,7 @@
 int pinDIN = 12;
 int pinClk = 13;
 int pinCS = 10;
-int numberOfHorizontalDisplays = 1; // This example does not support other values then 1
+int numberOfHorizontalDisplays = 1;
 
 Max72xxPanel matrix = Max72xxPanel(pinDIN, pinClk, pinCS, numberOfHorizontalDisplays);
 
