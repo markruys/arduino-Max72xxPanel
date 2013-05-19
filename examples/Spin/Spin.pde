@@ -4,8 +4,9 @@
 
 int pinCS = 10; // Attach CS to this pin, DIN to MOSI and CLK to SCK (cf http://arduino.cc/en/Reference/SPI )
 int numberOfHorizontalDisplays = 1;
+int numberOfVerticalDisplays = 1;
 
-Max72xxPanel matrix = Max72xxPanel(pinCS, numberOfHorizontalDisplays);
+Max72xxPanel matrix = Max72xxPanel(pinCS, numberOfHorizontalDisplays, numberOfVerticalDisplays);
 
 void setup() {
   matrix.setIntensity(0);
@@ -16,15 +17,15 @@ int inc = -2;
 
 void loop() {
 
-  for ( int x = 0; x < 8 * numberOfHorizontalDisplays - 1; x++ ) {
+  for ( int x = 0; x < matrix.xMax; x++ ) {
     matrix.fillScreen(LOW);
-    matrix.drawLine(x, 0, 8 * numberOfHorizontalDisplays - 1 - x, 7, HIGH);
+    matrix.drawLine(x, 0, matrix.xMax - x, matrix.yMax, HIGH);
     delay(wait);
   }
 
-  for ( int y = 0; y < 7; y++ ) {
+  for ( int y = 0; y < matrix.yMax; y++ ) {
     matrix.fillScreen(LOW);
-    matrix.drawLine(8 * numberOfHorizontalDisplays - 1, y, 0, 7 - y, HIGH);
+    matrix.drawLine(matrix.xMax, y, 0, matrix.yMax - y, HIGH);
     delay(wait);
   }
 

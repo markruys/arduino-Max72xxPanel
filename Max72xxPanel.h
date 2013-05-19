@@ -12,6 +12,9 @@
  Written by Mark Ruys.
  BSD license, check license.txt for more information.
  All text above must be included in any redistribution.
+
+ Datasheet: http://datasheets.maximintegrated.com/en/ds/MAX7219-MAX7221.pdf
+
  ******************************************************************/
 
 #ifndef Max72xxPanel_h
@@ -35,7 +38,7 @@ public:
    * Params :
    * csPin		pin for selecting the device
    * hDisplays  number of displays horizontally
-   * vDisplays  number of displays vertically -- ONLY 1 VERTICAL DISPLAY IS SUPPORTED
+   * vDisplays  number of displays vertically
    */
   Max72xxPanel(int csPin, int hDisplays=1, int vDisplays=1);
 
@@ -66,13 +69,16 @@ public:
    */
   void doubleBuffering(boolean enabled);
 
+  int xMax;        /* The maximum value on the x-axis */
+  int yMax;        /* The maximum value on the y-axis */
+
 private:
   int SPI_CS;      /* This one is driven LOW for chip selection */
   int hDisplays;   /* The number of horizontal displays */
   int vDisplays;   /* The number of vertical displays */
 
   /* Send out a single command to the device */
-  void spiTransfer(byte opcode, byte data, int addr=-1);
+  void spiTransfer(byte opcode, byte data=0);
 
   /* We keep track of the led-status for all max 8 devices in this array */
   byte *buffer;

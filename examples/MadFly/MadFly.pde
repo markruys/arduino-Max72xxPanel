@@ -4,10 +4,9 @@
 
 int pinCS = 10; // Attach CS to this pin, DIN to MOSI and CLK to SCK (cf http://arduino.cc/en/Reference/SPI )
 int numberOfHorizontalDisplays = 1;
+int numberOfVerticalDisplays = 1;
 
-Max72xxPanel matrix = Max72xxPanel(pinCS, numberOfHorizontalDisplays);
-
-Max72xxPanel matrix = Max72xxPanel(pinDIN, pinClk, pinCS, numberOfHorizontalDisplays);
+Max72xxPanel matrix = Max72xxPanel(pinCS, numberOfHorizontalDisplays, numberOfVerticalDisplays);
 
 int pinRandom = A0;
 
@@ -32,10 +31,10 @@ void loop() {
 
   do {
     switch ( random(4) ) {
-      case 0: xNext = constrain(x + 1, 0, numberOfHorizontalDisplays * 8 - 1); yNext = y; break;
-      case 1: xNext = constrain(x - 1, 0, numberOfHorizontalDisplays * 8 - 1); yNext = y; break;
-      case 2: yNext = constrain(y + 1, 0, 7); xNext = x; break;
-      case 3: yNext = constrain(y - 1, 0, 7); xNext = x; break;
+      case 0: xNext = constrain(x + 1, 0, matrix.xMax); yNext = y; break;
+      case 1: xNext = constrain(x - 1, 0, matrix.xMax); yNext = y; break;
+      case 2: yNext = constrain(y + 1, 0, matrix.yMax); xNext = x; break;
+      case 3: yNext = constrain(y - 1, 0, matrix.yMax); xNext = x; break;
     }
   }
   while ( x == xNext && y == yNext ); // Repeat until we find a new coordinate
@@ -43,4 +42,3 @@ void loop() {
   x = xNext;
   y = yNext;
 }
-

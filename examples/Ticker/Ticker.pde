@@ -4,8 +4,9 @@
 
 int pinCS = 10; // Attach CS to this pin, DIN to MOSI and CLK to SCK (cf http://arduino.cc/en/Reference/SPI )
 int numberOfHorizontalDisplays = 1;
+int numberOfVerticalDisplays = 1;
 
-Max72xxPanel matrix = Max72xxPanel(pinCS, numberOfHorizontalDisplays);
+Max72xxPanel matrix = Max72xxPanel(pinCS, numberOfHorizontalDisplays, numberOfVerticalDisplays);
 
 String tape = "Arduino";
 int wait = 200; // In milliseconds
@@ -19,18 +20,18 @@ void setup() {
 
 void loop() {
 
-  for ( int i = 0 ; i < width * tape.length() + numberOfHorizontalDisplays * 8 - 1 - spacer; i++ ) {
+  for ( int i = 0 ; i < width * tape.length() + matrix.xMax - spacer; i++ ) {
 
     matrix.doubleBuffering(true); // Prevent screen flicker
 
     matrix.fillScreen(LOW);
 
     int letter = i / width;
-    int x = numberOfHorizontalDisplays * 8 - 1 - i % width;
+    int x = matrix.xMax - i % width;
 
     while ( x + width - spacer >= 0 && letter >= 0 ) {
       if ( letter < tape.length() ) {
-        matrix.drawChar(x, 0, tape[letter], HIGH, LOW, 1);
+        matrix.drawChar(x, (matrix.yMax + 1 - 8) / 2, tape[letter], HIGH, LOW, 1);
       }
 
       letter--;

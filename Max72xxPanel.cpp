@@ -39,8 +39,11 @@ Max72xxPanel::Max72xxPanel(int csPin, int hDisplays, int vDisplays) {
   Max72xxPanel::SPI_CS = csPin;
   Max72xxPanel::hDisplays = hDisplays;
   Max72xxPanel::vDisplays = vDisplays;
+
   Max72xxPanel::doubleBuffer = false;
   Max72xxPanel::buffer = (byte*)malloc(hDisplays * vDisplays * 8);
+	Max72xxPanel::xMax = hDisplays * 8 - 1;
+	Max72xxPanel::yMax = vDisplays * 8 - 1;
 
   SPI.begin();
   SPI.setBitOrder(MSBFIRST);
@@ -81,28 +84,37 @@ void Max72xxPanel::drawPixel(int16_t x, int16_t y, uint16_t color) {
 }
 
 void Max72xxPanel::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
-  // To do: support y > 8
-  if ( x >= 0 && x < hDisplays * 8 && y >= 0 && y < vDisplays * 8) {
-    byte val = ((1 << h) - 1) << y;
-    if ( color ) {
-      buffer[x] |= val;
-    }
-    else {
-      buffer[x] &= ~val;
-    }
-    spiTransfer(OP_DIGIT0 + x % 8, buffer[x], x / 8);
+  if ( x >= 0 && x <= xMax && y >= 0 && y <= yMax ) {
+		byte *ptr = (byte *)buffer + x + y / 8 * hDisplays * 8;
+		y %= 8;
+    while ( h > 0 ) {
+      int hPart = min(8 - y, h); // Ranging from 0 to 8
+			byte val = ((1 << hPart) - 1) << y;
+
+			if ( color ) {
+				*ptr |= val;
+			}
+			else {
+				*ptr &= ~val;
+			}
+
+			h -= hPart;
+			y = 0;
+			ptr += hDisplays * 8;
+		}
+
+		spiTransfer(OP_DIGIT0 + x % 8);
   }
 }
 
 void Max72xxPanel::fillScreen(uint16_t color) {
-  byte val = color ? 0xff : 0;
 
-  for (int x = hDisplays * vDisplays * 8 - 1; x >= 0; x-- ) {
-    buffer[x] = val;
+  for ( int x = hDisplays * vDisplays * 8 - 1; x >= 0; x-- ) {
+    buffer[x] = color ? 0xff : 0;
   }
 
-  for (int opcode = OP_DIGIT0; opcode <= OP_DIGIT7; opcode++ ) {
-    spiTransfer(opcode, val);
+  for ( int opcode = OP_DIGIT0; opcode <= OP_DIGIT7; opcode++ ) {
+    spiTransfer(opcode);
   }
 }
 
@@ -113,39 +125,28 @@ void Max72xxPanel::doubleBuffering(boolean enabled) {
   doubleBuffer = enabled;
 
   if ( flush ) {
-    // Now shift out the data
-    for ( int d = 0; d < 8; d++ ) {
-      // Enable the line
-      digitalWrite(SPI_CS, LOW);
-
-      for ( int i = hDisplays * vDisplays - 1; i >= 0; i-- ) {
-        SPI.transfer(OP_DIGIT0 + d);
-        SPI.transfer(buffer[i * 8 + d]);
-      }
-
-      // Latch the data onto the display(s)
-      digitalWrite(SPI_CS, HIGH);
+    for ( int row = 0; row < 8; row++ ) {
+    	spiTransfer(OP_DIGIT0 + row, 0);
     }
   }
 }
 
-void Max72xxPanel::spiTransfer(byte opcode, byte data, int displ) {
-  // If disp < 0, we send the byte of data to all displays
+void Max72xxPanel::spiTransfer(byte opcode, byte data) {
+	// If opcode > OP_DIGIT7, send the opcode and data to all displays
+	// If opcode <= OP_DIGIT7, display the column with data in our buffer for all displays.
+	// We do not support (nor need) to use the OP_NOOP opcode.
 
   if ( ! doubleBuffer ) {
     // Enable the line
     digitalWrite(SPI_CS, LOW);
 
     // Now shift out the data
-    for ( int i = hDisplays * vDisplays - 1; i >= 0; i-- ) {
-      // In case the display is -1, we want to shift out the data to all digits
-      boolean hit = displ < 0 || i == displ;
-      SPI.transfer(hit ? opcode : OP_NOOP);
-      SPI.transfer(hit ? data : 0);
+    for ( int display = hDisplays * vDisplays - 1; display >= 0; display-- ) {
+      SPI.transfer(opcode);
+      SPI.transfer(opcode <= OP_DIGIT7 ? buffer[display * 8 + (opcode - OP_DIGIT0)] : data);
     }
 
     // Latch the data onto the display(s)
     digitalWrite(SPI_CS, HIGH);
   }
 }
-
