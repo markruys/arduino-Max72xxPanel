@@ -42,8 +42,6 @@ Max72xxPanel::Max72xxPanel(int csPin, int hDisplays, int vDisplays) {
 
   Max72xxPanel::doubleBuffer = false;
   Max72xxPanel::buffer = (byte*)malloc(hDisplays * vDisplays * 8);
-	Max72xxPanel::xMax = hDisplays * 8 - 1;
-	Max72xxPanel::yMax = vDisplays * 8 - 1;
 
   SPI.begin();
   SPI.setBitOrder(MSBFIRST);
@@ -84,7 +82,7 @@ void Max72xxPanel::drawPixel(int16_t x, int16_t y, uint16_t color) {
 }
 
 void Max72xxPanel::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
-  if ( x >= 0 && x <= xMax && y >= 0 && y <= yMax ) {
+  if ( x >= 0 && x < width() && y >= 0 && y < height() ) {
 		byte *ptr = (byte *)buffer + x + y / 8 * hDisplays * 8;
 		y %= 8;
     while ( h > 0 ) {

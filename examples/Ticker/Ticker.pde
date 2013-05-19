@@ -20,18 +20,18 @@ void setup() {
 
 void loop() {
 
-  for ( int i = 0 ; i < width * tape.length() + matrix.xMax - spacer; i++ ) {
+  for ( int i = 0 ; i < width * tape.length() + matrix.width() - spacer; i++ ) {
 
     matrix.doubleBuffering(true); // Prevent screen flicker
 
     matrix.fillScreen(LOW);
 
     int letter = i / width;
-    int x = matrix.xMax - i % width;
+    int x = (matrix.width() - 1) - i % width;
 
     while ( x + width - spacer >= 0 && letter >= 0 ) {
       if ( letter < tape.length() ) {
-        matrix.drawChar(x, (matrix.yMax + 1 - 8) / 2, tape[letter], HIGH, LOW, 1);
+        matrix.drawChar(x, (matrix.height() - 8) / 2, tape[letter], HIGH, LOW, 1);
       }
 
       letter--;

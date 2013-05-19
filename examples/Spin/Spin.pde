@@ -17,15 +17,15 @@ int inc = -2;
 
 void loop() {
 
-  for ( int x = 0; x < matrix.xMax; x++ ) {
+  for ( int x = 0; x < matrix.width() - 1; x++ ) {
     matrix.fillScreen(LOW);
-    matrix.drawLine(x, 0, matrix.xMax - x, matrix.yMax, HIGH);
+    matrix.drawLine(x, 0, matrix.width() - 1 - x, matrix.height() - 1, HIGH);
     delay(wait);
   }
 
-  for ( int y = 0; y < matrix.yMax; y++ ) {
+  for ( int y = 0; y < matrix.height() - 1; y++ ) {
     matrix.fillScreen(LOW);
-    matrix.drawLine(matrix.xMax, y, 0, matrix.yMax - y, HIGH);
+    matrix.drawLine(matrix.width() - 1, y, 0, matrix.height() - 1 - y, HIGH);
     delay(wait);
   }
 

@@ -69,9 +69,6 @@ public:
    */
   void doubleBuffering(boolean enabled);
 
-  int xMax;        /* The maximum value on the x-axis */
-  int yMax;        /* The maximum value on the y-axis */
-
 private:
   int SPI_CS;      /* This one is driven LOW for chip selection */
   int hDisplays;   /* The number of horizontal displays */

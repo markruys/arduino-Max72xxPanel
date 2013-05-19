@@ -31,10 +31,10 @@ void loop() {
 
   do {
     switch ( random(4) ) {
-      case 0: xNext = constrain(x + 1, 0, matrix.xMax); yNext = y; break;
-      case 1: xNext = constrain(x - 1, 0, matrix.xMax); yNext = y; break;
-      case 2: yNext = constrain(y + 1, 0, matrix.yMax); xNext = x; break;
-      case 3: yNext = constrain(y - 1, 0, matrix.yMax); xNext = x; break;
+      case 0: xNext = constrain(x + 1, 0, matrix.width() - 1); yNext = y; break;
+      case 1: xNext = constrain(x - 1, 0, matrix.width() - 1); yNext = y; break;
+      case 2: yNext = constrain(y + 1, 0, matrix.height() - 1); xNext = x; break;
+      case 3: yNext = constrain(y - 1, 0, matrix.height() - 1); xNext = x; break;
     }
   }
   while ( x == xNext && y == yNext ); // Repeat until we find a new coordinate

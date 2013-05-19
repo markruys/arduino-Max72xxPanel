@@ -46,10 +46,10 @@ void loop() {
 
     // Jump at random one step up, down, left, or right
     switch ( random(4) ) {
-    case 0: x[nextPtr] = constrain(x[ptr] + 1, 0, matrix.xMax); y[nextPtr] = y[ptr]; break;
-    case 1: x[nextPtr] = constrain(x[ptr] - 1, 0, matrix.xMax); y[nextPtr] = y[ptr]; break;
-    case 2: y[nextPtr] = constrain(y[ptr] + 1, 0, matrix.yMax); x[nextPtr] = x[ptr]; break;
-    case 3: y[nextPtr] = constrain(y[ptr] - 1, 0, matrix.yMax); x[nextPtr] = x[ptr]; break;
+    case 0: x[nextPtr] = constrain(x[ptr] + 1, 0, matrix.width() - 1); y[nextPtr] = y[ptr]; break;
+    case 1: x[nextPtr] = constrain(x[ptr] - 1, 0, matrix.width() - 1); y[nextPtr] = y[ptr]; break;
+    case 2: y[nextPtr] = constrain(y[ptr] + 1, 0, matrix.height() - 1); x[nextPtr] = x[ptr]; break;
+    case 3: y[nextPtr] = constrain(y[ptr] - 1, 0, matrix.height() - 1); x[nextPtr] = x[ptr]; break;
     }
 
     if ( ! occupied(nextPtr) ) {
