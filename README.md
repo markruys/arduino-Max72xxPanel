@@ -20,7 +20,7 @@ Place the [Max72xxPanel][download] and [Adafruit_GFX][gfx-download] library fold
 
 Features
 --------
-- Double buffering to prevent screen flicker. Check out ticker tape example for usage.
+- Double buffering to prevent screen flicker. Check out the ticker tape example for usage.
 - Support for multiple matrix displays, connected in cascade.
 - Uses the [SPI library][spi] to address the display(s).
 - Very low memory footprint.
