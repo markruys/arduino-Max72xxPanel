@@ -43,7 +43,7 @@ public:
   Max72xxPanel(int csPin, int hDisplays=1, int vDisplays=1);
 
   void drawPixel(int16_t x, int16_t y, uint16_t color);
-  void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color);
+  void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
   void fillScreen(uint16_t color);
 
   /*
@@ -70,16 +70,16 @@ public:
   void doubleBuffering(boolean enabled);
 
 private:
-  int SPI_CS;      /* This one is driven LOW for chip selection */
-  int hDisplays;   /* The number of horizontal displays */
-  int vDisplays;   /* The number of vertical displays */
+  int SPI_CS;      /* Chip selection */
 
   /* Send out a single command to the device */
   void spiTransfer(byte opcode, byte data=0);
+  void drawLineHelper(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
 
   /* We keep track of the led-status for all max 8 devices in this array */
   byte *buffer;
   boolean doubleBuffer;
+  int bufferSize;
 };
 
 #endif	// Max72xxPanel_h

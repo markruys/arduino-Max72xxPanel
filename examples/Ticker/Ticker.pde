@@ -12,7 +12,7 @@ String tape = "Arduino";
 int wait = 200; // In milliseconds
 
 int spacer = 1;
-int width = 5 + spacer; // Our font is 5 pixel width
+int width = 5 + spacer; // The font width is 5 pixels
 
 void setup() {
   matrix.setIntensity(7); // Use a value between 0 and 15 for brightness
@@ -20,7 +20,7 @@ void setup() {
 
 void loop() {
 
-  for ( int i = 0 ; i < width * tape.length() + matrix.width() - spacer; i++ ) {
+  for ( int i = 0 ; i < width * tape.length() + matrix.width() - 1 - spacer; i++ ) {
 
     matrix.doubleBuffering(true); // Prevent screen flicker
 
@@ -28,10 +28,11 @@ void loop() {
 
     int letter = i / width;
     int x = (matrix.width() - 1) - i % width;
+    int y = (matrix.height() - 8) / 2; // center the text vertically
 
     while ( x + width - spacer >= 0 && letter >= 0 ) {
       if ( letter < tape.length() ) {
-        matrix.drawChar(x, (matrix.height() - 8) / 2, tape[letter], HIGH, LOW, 1);
+        matrix.drawChar(x, y, tape[letter], HIGH, LOW, 1);
       }
 
       letter--;

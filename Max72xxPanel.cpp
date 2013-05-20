@@ -37,15 +37,13 @@
 Max72xxPanel::Max72xxPanel(int csPin, int hDisplays, int vDisplays) {
 
   Max72xxPanel::SPI_CS = csPin;
-  Max72xxPanel::hDisplays = hDisplays;
-  Max72xxPanel::vDisplays = vDisplays;
-
   Max72xxPanel::doubleBuffer = false;
-  Max72xxPanel::buffer = (byte*)malloc(hDisplays * vDisplays * 8);
+  Max72xxPanel::bufferSize = hDisplays * vDisplays * 8;
+  Max72xxPanel::buffer = (byte*)malloc(bufferSize);
 
   SPI.begin();
-  SPI.setBitOrder(MSBFIRST);
-  SPI.setDataMode(SPI_MODE0);
+//SPI.setBitOrder(MSBFIRST);
+//SPI.setDataMode(SPI_MODE0);
   pinMode(SPI_CS, OUTPUT);
 
   // Clear the screen
@@ -66,7 +64,7 @@ Max72xxPanel::Max72xxPanel(int csPin, int hDisplays, int vDisplays) {
   // Set the brightness to a medium value
   setIntensity(7);
 
-  constructor(Max72xxPanel::hDisplays * 8, Max72xxPanel::vDisplays * 8);
+  constructor(hDisplays << 3, vDisplays << 3);
 }
 
 void Max72xxPanel::shutdown(boolean b) {
@@ -74,20 +72,50 @@ void Max72xxPanel::shutdown(boolean b) {
 }
 
 void Max72xxPanel::setIntensity(int intensity) {
-  spiTransfer(OP_INTENSITY, intensity & 0x0f);
+  spiTransfer(OP_INTENSITY, intensity);
 }
 
 void Max72xxPanel::drawPixel(int16_t x, int16_t y, uint16_t color) {
-  drawFastVLine(x, y, 1, color);
+  drawLine(x, y, x, y, color);
 }
 
-void Max72xxPanel::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color) {
-  if ( x >= 0 && x < width() && y >= 0 && y < height() ) {
-		byte *ptr = (byte *)buffer + x + y / 8 * hDisplays * 8;
-		y %= 8;
+void Max72xxPanel::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
+
+	if ( rotation >= 2 ) {										// rotation == 2 || rotation == 3
+		x0 = _width - 1 - x0;
+		x1 = _width - 1 - x1;
+	}
+
+	if ( rotation == 1 || rotation == 2 ) {		// rotation == 1 || rotation == 2
+		y0 = _height - 1 - y0;
+		y1 = _height - 1 - y1;
+	}
+
+	if ( rotation & 1 ) {     								// rotation == 1 || rotation == 3
+		drawLineHelper(y0, x0, y1, x1, color);
+	}
+	else {
+		drawLineHelper(x0, y0, x1, y1, color);
+	}
+}
+
+void Max72xxPanel::drawLineHelper(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
+	if ( x0 == x1 ) {
+		if ( x0 < 0 || x0 > _width ) {
+			return;
+		}
+		if ( y0 > y1 ) {
+			swap(y0, y1);
+		}
+		y0 = constrain(y0, 0, _height - 1);
+		int h = constrain(y1 - y0 + 1, 0, _height - y0);
+
+		byte *ptr = (byte *)buffer + x0 + WIDTH * (y0 >> 3);
+		y0 &= 0b111;
+
     while ( h > 0 ) {
-      int hPart = min(8 - y, h); // Ranging from 0 to 8
-			byte val = ((1 << hPart) - 1) << y;
+      int hPart = min(8 - y0, h); // Ranging from 0 to 8
+			byte val = ((1 << hPart) - 1) << y0;
 
 			if ( color ) {
 				*ptr |= val;
@@ -97,17 +125,20 @@ void Max72xxPanel::drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color
 			}
 
 			h -= hPart;
-			y = 0;
-			ptr += hDisplays * 8;
+			y0 = 0;
+			ptr += WIDTH;
 		}
 
-		spiTransfer(OP_DIGIT0 + x % 8);
-  }
+		spiTransfer(OP_DIGIT0 + (x0 & 0b111));
+	}
+	else {
+	  Adafruit_GFX::drawLine(x0, y0, x1, y1, color);
+	}
 }
 
 void Max72xxPanel::fillScreen(uint16_t color) {
 
-  for ( int x = hDisplays * vDisplays * 8 - 1; x >= 0; x-- ) {
+  for ( int x = bufferSize - 1; x >= 0; x-- ) {
     buffer[x] = color ? 0xff : 0;
   }
 
@@ -118,13 +149,13 @@ void Max72xxPanel::fillScreen(uint16_t color) {
 
 void Max72xxPanel::doubleBuffering(boolean enabled) {
 
-  boolean flush = ! enabled && doubleBuffer;
+  boolean old = doubleBuffer;
 
   doubleBuffer = enabled;
 
-  if ( flush ) {
-    for ( int row = 0; row < 8; row++ ) {
-    	spiTransfer(OP_DIGIT0 + row, 0);
+  if ( old && ! doubleBuffer ) {
+    for ( int row = OP_DIGIT7; row >= OP_DIGIT0; row-- ) {
+    	spiTransfer(row);
     }
   }
 }
@@ -139,7 +170,7 @@ void Max72xxPanel::spiTransfer(byte opcode, byte data) {
     digitalWrite(SPI_CS, LOW);
 
     // Now shift out the data
-    for ( int display = hDisplays * vDisplays - 1; display >= 0; display-- ) {
+    for ( int display = bufferSize - 1; display >= 0; display-- ) {
       SPI.transfer(opcode);
       SPI.transfer(opcode <= OP_DIGIT7 ? buffer[display * 8 + (opcode - OP_DIGIT0)] : data);
     }

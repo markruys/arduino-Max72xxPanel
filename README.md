@@ -23,7 +23,7 @@ Features
 - Double buffering to prevent screen flicker. Check out the ticker tape example for usage.
 - Support for multiple matrix displays, connected in cascade.
 - Uses the [SPI library][spi] to address the display(s).
-- Very low memory footprint.
+- Low memory footprint.
 
 [download]: https://github.com/markruys/arduino-Max72xxPanel/archive/master.zip "Download Max72xxPanel library"
 [gfx-download]: https://github.com/adafruit/Adafruit-GFX-Library "Download Adafruit GFX Graphics Library"
