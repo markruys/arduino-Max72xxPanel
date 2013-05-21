@@ -75,6 +75,60 @@ void Max72xxPanel::setIntensity(int intensity) {
   spiTransfer(OP_INTENSITY, intensity);
 }
 
+void Max72xxPanel::setRotation(uint8_t r) {
+	int c = (4 + r - rotation) % 4;
+
+	Adafruit_GFX::setRotation(r);
+
+	byte *tmp = (byte*)malloc(bufferSize);
+	if ( ! tmp ) {
+		return; // out of memory
+	}
+
+ 	for ( int i = bufferSize - 1; i >= 0; i-- ) {
+		tmp[i] = 0;
+	}
+
+	for ( int x = WIDTH - 1; x >= 0; x-- ) {
+		for ( int y = 0; y < HEIGHT; y++ ) {
+			if ( (buffer[x + WIDTH * (y / 8)] >> (y % 8)) & 1 ) {
+
+				int xx;
+				int yy;
+				switch ( c ) {
+				case 1:
+					xx = HEIGHT - 1 - y;
+					yy = x;
+					break;
+				case 2:
+					xx = WIDTH - 1 - x;
+					yy = HEIGHT - 1 - y;
+					break;
+				case 3:
+					xx = y;
+					yy = WIDTH - 1 - x;
+					break;
+				default:
+					xx = x;
+					yy = y;
+					break;
+				}
+
+				if ( xx < WIDTH && yy < HEIGHT ) {
+					tmp[xx + WIDTH * (yy / 8)] |= (1 << (yy % 8));
+				}
+			}
+		}
+	}
+
+	memcpy(buffer, tmp, bufferSize);
+	free(tmp);
+
+  for ( int opcode = OP_DIGIT0; opcode <= OP_DIGIT7; opcode++ ) {
+    spiTransfer(opcode);
+  }
+}
+
 void Max72xxPanel::drawPixel(int16_t x, int16_t y, uint16_t color) {
   drawLine(x, y, x, y, color);
 }
