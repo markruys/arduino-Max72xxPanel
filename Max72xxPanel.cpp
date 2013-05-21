@@ -101,14 +101,14 @@ void Max72xxPanel::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint
 
 void Max72xxPanel::drawLineHelper(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
 	if ( x0 == x1 ) {
-		if ( x0 < 0 || x0 > _width ) {
+		if ( x0 < 0 || x0 > WIDTH ) {
 			return;
 		}
 		if ( y0 > y1 ) {
 			swap(y0, y1);
 		}
-		y0 = constrain(y0, 0, _height - 1);
-		int h = constrain(y1 - y0 + 1, 0, _height - y0);
+		y0 = constrain(y0, 0, HEIGHT - 1);
+		int h = constrain(y1 - y0 + 1, 0, HEIGHT - y0);
 
 		byte *ptr = (byte *)buffer + x0 + WIDTH * (y0 >> 3);
 		y0 &= 0b111;
