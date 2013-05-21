@@ -170,7 +170,7 @@ void Max72xxPanel::spiTransfer(byte opcode, byte data) {
     digitalWrite(SPI_CS, LOW);
 
     // Now shift out the data
-    for ( int display = bufferSize - 1; display >= 0; display-- ) {
+    for ( int display = (bufferSize << 3) - 1; display >= 0; display-- ) {
       SPI.transfer(opcode);
       SPI.transfer(opcode <= OP_DIGIT7 ? buffer[display * 8 + (opcode - OP_DIGIT0)] : data);
     }
