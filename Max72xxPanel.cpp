@@ -101,7 +101,7 @@ void Max72xxPanel::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint
 
 void Max72xxPanel::drawLineHelper(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
 	if ( x0 == x1 ) {
-		if ( x0 < 0 || x0 > WIDTH ) {
+		if ( x0 < 0 || x0 >= WIDTH ) {
 			return;
 		}
 		if ( y0 > y1 ) {
