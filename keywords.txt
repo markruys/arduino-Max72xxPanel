@@ -17,15 +17,11 @@ setIntensity	KEYWORD2
 invertDisplay	KEYWORD2
 drawPixel	KEYWORD2
 drawLine	KEYWORD2
-drawFastVLine	KEYWORD2
-drawFastHLine	KEYWORD2
 drawRect	KEYWORD2
 fillRect	KEYWORD2
 fillScreen	KEYWORD2
 drawCircle	KEYWORD2
-drawCircleHelper	KEYWORD2
 fillCircle	KEYWORD2
-fillCircleHelper	KEYWORD2
 drawTriangle	KEYWORD2
 fillTriangle	KEYWORD2
 drawRoundRect	KEYWORD2
@@ -38,9 +34,9 @@ setTextColor	KEYWORD2
 setTextColor	KEYWORD2
 setTextSize	KEYWORD2
 setTextWrap	KEYWORD2
+setPosition	KEYWORD2
 setRotation	KEYWORD2
 getRotation	KEYWORD2
-doubleBuffering	KEYWORD2
 
 #######################################
 # Constants (LITERAL1)
