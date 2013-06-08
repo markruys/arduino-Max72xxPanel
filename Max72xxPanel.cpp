@@ -1,6 +1,6 @@
 /******************************************************************
  A library for controling a set of 8x8 LEDs with a MAX7219 or
- MAX7221.
+ MAX7221 displays.
  This is a plugin for Adafruit's core graphics library, providing
  basic graphics primitives (points, lines, circles, etc.).
  You need to download and install Adafruit_GFX to use this library.
@@ -34,12 +34,22 @@
 #define OP_SHUTDOWN    12
 #define OP_DISPLAYTEST 15
 
-Max72xxPanel::Max72xxPanel(int csPin, int hDisplays, int vDisplays) {
+Max72xxPanel::Max72xxPanel(byte csPin, byte hDisplays, byte vDisplays) {
 
   Max72xxPanel::SPI_CS = csPin;
-  Max72xxPanel::doubleBuffer = false;
-  Max72xxPanel::bufferSize = hDisplays * vDisplays * 8;
-  Max72xxPanel::buffer = (byte*)malloc(bufferSize);
+
+  byte displays = hDisplays * vDisplays;
+  Max72xxPanel::hDisplays = hDisplays;
+	Max72xxPanel::bitmapSize = displays << 3;
+
+  Max72xxPanel::bitmap = (byte*)malloc(bitmapSize);
+  Max72xxPanel::matrixRotation = (byte*)malloc(displays);
+  Max72xxPanel::matrixPosition = (byte*)malloc(displays);
+
+  for ( byte display = 0; display < displays; display++ ) {
+  	matrixPosition[display] = display;
+  	matrixRotation[display] = 0;
+  }
 
   SPI.begin();
 //SPI.setBitOrder(MSBFIRST);
@@ -67,115 +77,120 @@ Max72xxPanel::Max72xxPanel(int csPin, int hDisplays, int vDisplays) {
   constructor(hDisplays << 3, vDisplays << 3);
 }
 
+void Max72xxPanel::setPosition(byte display, byte x, byte y) {
+	matrixPosition[x + hDisplays * y] = display;
+}
+
+void Max72xxPanel::setRotation(byte display, byte rotation) {
+	matrixRotation[display] = rotation;
+}
+
+void Max72xxPanel::setRotation(uint8_t rotation) {
+	Adafruit_GFX::setRotation(rotation);
+}
+
 void Max72xxPanel::shutdown(boolean b) {
   spiTransfer(OP_SHUTDOWN, b ? 0 : 1);
 }
 
-void Max72xxPanel::setIntensity(int intensity) {
+void Max72xxPanel::setIntensity(byte intensity) {
   spiTransfer(OP_INTENSITY, intensity);
 }
 
-void Max72xxPanel::drawPixel(int16_t x, int16_t y, uint16_t color) {
-  drawLine(x, y, x, y, color);
-}
-
-void Max72xxPanel::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
-
-	if ( rotation >= 2 ) {										// rotation == 2 || rotation == 3
-		x0 = _width - 1 - x0;
-		x1 = _width - 1 - x1;
-	}
-
-	if ( rotation == 1 || rotation == 2 ) {		// rotation == 1 || rotation == 2
-		y0 = _height - 1 - y0;
-		y1 = _height - 1 - y1;
-	}
-
-	if ( rotation & 1 ) {     								// rotation == 1 || rotation == 3
-		drawLineHelper(y0, x0, y1, x1, color);
-	}
-	else {
-		drawLineHelper(x0, y0, x1, y1, color);
-	}
-}
-
-void Max72xxPanel::drawLineHelper(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color) {
-	if ( x0 == x1 ) {
-		if ( x0 < 0 || x0 >= WIDTH ) {
-			return;
-		}
-		if ( y0 > y1 ) {
-			swap(y0, y1);
-		}
-		y0 = constrain(y0, 0, HEIGHT - 1);
-		int h = constrain(y1 - y0 + 1, 0, HEIGHT - y0);
-
-		byte *ptr = (byte *)buffer + x0 + WIDTH * (y0 >> 3);
-		y0 &= 0b111;
-
-    while ( h > 0 ) {
-      int hPart = min(8 - y0, h); // Ranging from 0 to 8
-			byte val = ((1 << hPart) - 1) << y0;
-
-			if ( color ) {
-				*ptr |= val;
-			}
-			else {
-				*ptr &= ~val;
-			}
-
-			h -= hPart;
-			y0 = 0;
-			ptr += WIDTH;
-		}
-
-		spiTransfer(OP_DIGIT0 + (x0 & 0b111));
-	}
-	else {
-	  Adafruit_GFX::drawLine(x0, y0, x1, y1, color);
-	}
-}
-
 void Max72xxPanel::fillScreen(uint16_t color) {
-
-  for ( int x = bufferSize - 1; x >= 0; x-- ) {
-    buffer[x] = color ? 0xff : 0;
-  }
-
-  for ( int opcode = OP_DIGIT0; opcode <= OP_DIGIT7; opcode++ ) {
-    spiTransfer(opcode);
-  }
+  memset(bitmap, color ? 0xff : 0, bitmapSize);
 }
 
-void Max72xxPanel::doubleBuffering(boolean enabled) {
+void Max72xxPanel::drawPixel(int16_t xx, int16_t yy, uint16_t color) {
+	// Operating in bytes is faster and takes less code to run. We don't
+	// need values above 200, so switch from 16 bit ints to 8 bit unsigned
+	// ints (bytes).
+	int8_t x = xx;
+	byte y = yy;
+	byte tmp;
 
-  boolean old = doubleBuffer;
+	if ( rotation ) {
+		// Implement Adafruit's rotation.
+		if ( rotation >= 2 ) {										// rotation == 2 || rotation == 3
+			x = _width - 1 - x;
+		}
 
-  doubleBuffer = enabled;
+		if ( rotation == 1 || rotation == 2 ) {		// rotation == 1 || rotation == 2
+			y = _height - 1 - y;
+		}
 
-  if ( old && ! doubleBuffer ) {
-    for ( int row = OP_DIGIT7; row >= OP_DIGIT0; row-- ) {
-    	spiTransfer(row);
-    }
-  }
+		if ( rotation & 1 ) {     								// rotation == 1 || rotation == 3
+			tmp = x; x = y; y = tmp;
+		}
+	}
+
+	if ( x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT ) {
+		// Ignore pixels outside the canvas.
+		return;
+	}
+
+	// Translate the x, y coordinate according to the layout of the
+	// displays. They can be ordered and rotated (0, 90, 180, 270).
+
+	byte display = matrixPosition[(x >> 3) + hDisplays * (y >> 3)];
+	x &= 0b111;
+	y &= 0b111;
+
+	byte r = matrixRotation[display];
+	if ( r >= 2 ) {										   // 180 or 270 degrees
+		x = 7 - x;
+	}
+	if ( r == 1 || r == 2 ) {				     // 90 or 180 degrees
+		y = 7 - y;
+	}
+	if ( r & 1 ) {     								   // 90 or 270 degrees
+		tmp = x; x = y; y = tmp;
+	}
+
+	byte d = display / hDisplays;
+	x += (display - d * hDisplays) << 3; // x += (display % hDisplays) * 8
+	y += d << 3;												 // y += (display / hDisplays) * 8
+
+	// Update the color bit in our bitmap buffer.
+
+	byte *ptr = bitmap + x + WIDTH * (y >> 3);
+	byte val = 1 << (y & 0b111);
+
+	if ( color ) {
+		*ptr |= val;
+	}
+	else {
+		*ptr &= ~val;
+	}
+}
+
+void Max72xxPanel::write() {
+	// Send the bitmap buffer to the displays.
+
+	for ( byte row = OP_DIGIT7; row >= OP_DIGIT0; row-- ) {
+		spiTransfer(row);
+	}
 }
 
 void Max72xxPanel::spiTransfer(byte opcode, byte data) {
-	// If opcode > OP_DIGIT7, send the opcode and data to all displays
+	// If opcode > OP_DIGIT7, send the opcode and data to all displays.
 	// If opcode <= OP_DIGIT7, display the column with data in our buffer for all displays.
 	// We do not support (nor need) to use the OP_NOOP opcode.
 
-  if ( ! doubleBuffer ) {
-    // Enable the line
-    digitalWrite(SPI_CS, LOW);
+	// Enable the line
+	digitalWrite(SPI_CS, LOW);
 
-    // Now shift out the data
-    for ( int display = (bufferSize / 8) - 1; display >= 0; display-- ) {
-      SPI.transfer(opcode);
-      SPI.transfer(opcode <= OP_DIGIT7 ? buffer[display * 8 + (opcode - OP_DIGIT0)] : data);
-    }
+	// Now shift out the data, two bytes per display. The first byte is the opcode,
+	// the second byte the data.
+	byte end = opcode - OP_DIGIT0;
+	byte start = bitmapSize + end;
+	do {
+		start -= 8;
+		SPI.transfer(opcode);
+		SPI.transfer(opcode <= OP_DIGIT7 ? bitmap[start] : data);
+	}
+	while ( start > end );
 
-    // Latch the data onto the display(s)
-    digitalWrite(SPI_CS, HIGH);
-  }
+	// Latch the data onto the display(s)
+	digitalWrite(SPI_CS, HIGH);
 }
