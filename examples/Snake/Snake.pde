@@ -2,7 +2,7 @@
 #include <Adafruit_GFX.h>
 #include <Max72xxPanel.h>
 
-int pinCS = 7; // Attach CS to this pin, DIN to MOSI and CLK to SCK (cf http://arduino.cc/en/Reference/SPI )
+int pinCS = 10; // Attach CS to this pin, DIN to MOSI and CLK to SCK (cf http://arduino.cc/en/Reference/SPI )
 int numberOfHorizontalDisplays = 1;
 int numberOfVerticalDisplays = 1;
 
