@@ -27,10 +27,14 @@ Usage
 
 Read [overview][gfx-docs] for instructions how to use Adafruit_GFX. Check out our [examples][examples] to get some inspiration. Note that to update your displays, you need to explicitely call write().
 
+At YouTube, you'll find a [ticker tape][tickertape] and [snake] demo.
+
+
 [download]: https://github.com/markruys/arduino-Max72xxPanel/archive/master.zip "Download Max72xxPanel library"
 [gfx-download]: https://github.com/adafruit/Adafruit-GFX-Library "Download Adafruit GFX Graphics Library"
 [gfx-docs]: http://learn.adafruit.com/adafruit-gfx-graphics-library/overview "Documentation Adafruit GFX Graphics Library"
 [examples]: https://github.com/markruys/arduino-Max72xxPanel/tree/master/examples "Show Max72xxPanel examples"
 [hardware]: https://www.google.com/search?q=MAX7219+Red+Dot+Matrix+Module "For kits, google MAX7219 Red Dot Matrix Module"
 [spi]: http://arduino.cc/en/Reference/SPI "SPI library"
-
+[tickertape]: http://www.youtube.com/watch?v=a8T7ZFeaf1A "Max72xxPanel Arduino library demo (ticker tape)"
+[snake]: http://www.youtube.com/watch?v=FbJJyuCwohs "Max72xxPanel Arduino library demo (snake)"
