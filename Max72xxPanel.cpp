@@ -34,7 +34,7 @@
 #define OP_SHUTDOWN    12
 #define OP_DISPLAYTEST 15
 
-Max72xxPanel::Max72xxPanel(byte csPin, byte hDisplays, byte vDisplays) {
+Max72xxPanel::Max72xxPanel(byte csPin, byte hDisplays, byte vDisplays) : Adafruit_GFX(hDisplays << 3, vDisplays << 3) {
 
   Max72xxPanel::SPI_CS = csPin;
 
@@ -73,8 +73,6 @@ Max72xxPanel::Max72xxPanel(byte csPin, byte hDisplays, byte vDisplays) {
 
   // Set the brightness to a medium value
   setIntensity(7);
-
-  constructor(hDisplays << 3, vDisplays << 3);
 }
 
 void Max72xxPanel::setPosition(byte display, byte x, byte y) {
