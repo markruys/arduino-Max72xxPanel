@@ -14,7 +14,6 @@
  All text above must be included in any redistribution.
  ******************************************************************/
 
-#include <Adafruit_GFX.h>
 #include "Max72xxPanel.h"
 #include <SPI.h>
 
@@ -34,7 +33,14 @@
 #define OP_SHUTDOWN    12
 #define OP_DISPLAYTEST 15
 
-Max72xxPanel::Max72xxPanel(byte csPin, byte hDisplays, byte vDisplays) : Adafruit_GFX(hDisplays << 3, vDisplays << 3) {
+#ifndef Panel_No_Adafruit
+  Max72xxPanel::Max72xxPanel(byte csPin, byte hDisplays, byte vDisplays) : Adafruit_GFX(hDisplays << 3, vDisplays << 3) {
+#else
+  Max72xxPanel::Max72xxPanel(byte csPin, byte hDisplays, byte vDisplays) {
+
+  WIDTH = hDisplays << 3;
+  HEIGHT = vDisplays << 3;
+#endif
 
   Max72xxPanel::SPI_CS = csPin;
 
@@ -83,9 +89,11 @@ void Max72xxPanel::setRotation(byte display, byte rotation) {
 	matrixRotation[display] = rotation;
 }
 
+#ifndef Panel_No_Adafruit
 void Max72xxPanel::setRotation(uint8_t rotation) {
 	Adafruit_GFX::setRotation(rotation);
 }
+#endif
 
 void Max72xxPanel::shutdown(boolean b) {
   spiTransfer(OP_SHUTDOWN, b ? 0 : 1);
@@ -107,6 +115,7 @@ void Max72xxPanel::drawPixel(int16_t xx, int16_t yy, uint16_t color) {
 	byte y = yy;
 	byte tmp;
 
+#ifndef Panel_No_Adafruit
 	if ( rotation ) {
 		// Implement Adafruit's rotation.
 		if ( rotation >= 2 ) {										// rotation == 2 || rotation == 3
@@ -121,6 +130,7 @@ void Max72xxPanel::drawPixel(int16_t xx, int16_t yy, uint16_t color) {
 			tmp = x; x = y; y = tmp;
 		}
 	}
+#endif
 
 	if ( x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT ) {
 		// Ignore pixels outside the canvas.
