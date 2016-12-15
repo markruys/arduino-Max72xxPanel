@@ -27,7 +27,14 @@
  * Uncomment the following line if you do not want to 
  * include the Adafruit_GFX class. 
 */
-#define Panel_No_Adafruit
+// #define Panel_No_Adafruit
+
+/* 
+ * Uncomment the following line if you do not want to use
+ * the SPI library and do bit-banging transfer instead
+ * (E.g. because the SPI interface is already used by other hardware.)
+*/
+#define BitBang_SPI
 
 #if (ARDUINO >= 100)
   #include <Arduino.h>
@@ -52,7 +59,8 @@ public:
    * hDisplays  number of displays horizontally
    * vDisplays  number of displays vertically
    */
-  Max72xxPanel(byte csPin, byte hDisplays=1, byte vDisplays=1);
+    //Max72xxPanel(byte csPin, byte hDisplays=1, byte vDisplays=1);
+    Max72xxPanel(byte csPin, byte hDisplays=1, byte vDisplays=1, byte dataPin=0, byte clkPin=0);
 
   /*
    * Define how the displays are ordered. The first display (0)
@@ -121,9 +129,15 @@ private:
   void spiTransfer(byte opcode, byte data=0);
 
 #ifdef Panel_No_Adafruit
-  /* Panel width and height in pixels, usually part of the Adafruit class. */
+  /* Panel width and height in pixels, otherwise part of the Adafruit class. */
   int WIDTH, HEIGHT;
 #endif
+
+#ifdef BitBang_SPI
+  /* pin numbers for data (Master-Out-Slave-In) and Clock */
+  byte SPI_MOSI, SPI_CLK;
+#endif
+
 
   /* We keep track of the led-status for 8 devices in this array */
   byte *bitmap;
