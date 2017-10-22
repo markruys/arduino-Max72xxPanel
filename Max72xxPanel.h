@@ -55,9 +55,14 @@ public:
   /*
    * Create a new controler
    * Parameters:
-   * csPin              pin for selecting the device
-   * hDisplays  number of displays horizontally
-   * vDisplays  number of displays vertically
+   * csPin         pin for selecting the device
+   * hDisplays     number of displays horizontally
+   * vDisplays     number of displays vertically
+   * NOTE: The last two parameters are only used when using bit-banging! When using the 
+   *       SPI library (the default!) these values are ignored and you need to check the 
+   *       documentation of your hardware to see which pins you need to connect the Max72xx to.
+   * dataPin       pin used to transfer the data when using bit-banging
+   * clkPin        pin used for the clock when using bit-banging
    */
     //Max72xxPanel(byte csPin, byte hDisplays=1, byte vDisplays=1);
     Max72xxPanel(byte csPin, byte hDisplays=1, byte vDisplays=1, byte dataPin=0, byte clkPin=0);
