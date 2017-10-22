@@ -34,7 +34,7 @@
  * the SPI library and do bit-banging transfer instead
  * (E.g. because the SPI interface is already used by other hardware.)
 */
-#define BitBang_SPI
+// #define BitBang_SPI
 
 #if (ARDUINO >= 100)
   #include <Arduino.h>
