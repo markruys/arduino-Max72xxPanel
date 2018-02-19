@@ -8,7 +8,7 @@ int numberOfVerticalDisplays = 1;
 
 Max72xxPanel matrix = Max72xxPanel(pinCS, numberOfHorizontalDisplays, numberOfVerticalDisplays);
 
-String tape = "Arduino";
+String tape = "Arduino по-русски!";
 int wait = 20; // In milliseconds
 
 int spacer = 1;
@@ -25,7 +25,13 @@ void setup() {
 //  matrix.setPosition(3, 3, 0); // And the last display is at <3, 0>
 //  ...
 //  matrix.setRotation(0, 2);    // The first display is position upside down
-//  matrix.setRotation(3, 2);    // The same hold for the last display
+//  matrix.setRotation(3, 2);    // The same hold for the last displa
+
+  // Enable Code Page 437-compatible charset.
+  matrix.cp437(true);
+  
+  // Recode russian fonts from UTF-8 to Windows-1251
+  tape = utf8rus(tape);
 }
 
 void loop() {

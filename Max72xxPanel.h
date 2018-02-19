@@ -35,34 +35,34 @@ public:
   /*
    * Create a new controler
    * Parameters:
-   * csPin		pin for selecting the device
-   * hDisplays  number of displays horizontally
-   * vDisplays  number of displays vertically
+   * csPin pin for selecting the device
+   * hDisplays number of displays horizontally
+   * vDisplays number of displays vertically
    */
   Max72xxPanel(byte csPin, byte hDisplays=1, byte vDisplays=1);
 
-	/*
-	 * Define how the displays are ordered. The first display (0)
-	 * is the one closest to the Arduino.
-	 */
-	void setPosition(byte display, byte x, byte y);
+  /*
+   * Define how the displays are ordered. The first display (0)
+   * is the one closest to the Arduino.
+   */
+  void setPosition(byte display, byte x, byte y);
 
-	/*
-	 * Define if and how the displays are rotated. The first display
-	 * (0) is the one closest to the Arduino. rotation can be:
-	 *   0: no rotation
-	 *   1: 90 degrees clockwise
-	 *   2: 180 degrees
-	 *   3: 90 degrees counter clockwise
-	 */
-	void setRotation(byte display, byte rotation);
+  /*
+   * Define if and how the displays are rotated. The first display
+   * (0) is the one closest to the Arduino. rotation can be:
+   *   0: no rotation
+   *   1: 90 degrees clockwise
+   *   2: 180 degrees
+   *   3: 90 degrees counter clockwise
+   */
+  void setRotation(byte display, byte rotation);
 
-	/*
-	 * Implementation of Adafruit's setRotation(). Probably, you don't
-	 * need this function as you can achieve the same result by using
-	 * the previous two functions.
-	 */
-	void setRotation(byte rotation);
+  /*
+   * Implementation of Adafruit's setRotation(). Probably, you don't
+   * need this function as you can achieve the same result by using
+   * the previous two functions.
+   */
+  void setRotation(byte rotation);
 
   /*
    * Draw a pixel on your canvas. Note that for performance reasons,
@@ -70,6 +70,12 @@ public:
    * bitmap buffer is modified.
    */
   void drawPixel(int16_t x, int16_t y, uint16_t color);
+
+  /*
+   * Draw a character
+   */
+  void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color,
+      uint16_t bg, uint8_t size);
 
   /*
    * As we can do this much faster then setting all the pixels one by
@@ -81,15 +87,15 @@ public:
   /*
    * Set the shutdown (power saving) mode for the device
    * Paramaters:
-   * status	If true the device goes into power-down mode. Set to false
-   *		for normal operation.
+   * status If true the device goes into power-down mode. Set to false
+   * for normal operation.
    */
   void shutdown(boolean status);
 
   /*
    * Set the brightness of the display.
    * Paramaters:
-   * intensity	the brightness of the display. (0..15)
+   * intensity the brightness of the display. (0..15)
    */
   void setIntensity(byte intensity);
 
@@ -100,7 +106,8 @@ public:
   void write();
 
 private:
-  byte SPI_CS; /* SPI chip selection */
+  /* SPI chip selection */
+  byte SPI_CS;
 
   /* Send out a single command to the device */
   void spiTransfer(byte opcode, byte data=0);
@@ -114,7 +121,7 @@ private:
   byte *matrixRotation;
 };
 
-#endif	// Max72xxPanel_h
+#endif  // Max72xxPanel_h
 
 
 

@@ -7,6 +7,7 @@ This is a plugin for Adafruit's core graphics library GFX, providing basic graph
 
 Written by Mark Ruys, <mark@paracas.nl>, 2013.
 
+Cyrillic font added by Alexander Kropochev, <alexander@kropochev.com>, 2018.
 
 Installation
 ------------
@@ -21,6 +22,7 @@ Features
 - Uses the [SPI library][spi] to address the display(s) connected in cascade.
 - Low memory footprint.
 - Fast, no use of NOOP's.
+- Cyrillic font.
 
 Usage
 -----
@@ -30,10 +32,10 @@ Read [overview][gfx-docs] for instructions how to use Adafruit_GFX. Check out ou
 At YouTube, you'll find a [ticker tape][tickertape] and [snake] demo.
 
 
-[download]: https://github.com/markruys/arduino-Max72xxPanel/archive/master.zip "Download Max72xxPanel library"
+[download]: https://github.com/kropochev/arduino-Max72xxPanel/archive/master.zip "Download Max72xxPanel library"
 [gfx-download]: https://github.com/adafruit/Adafruit-GFX-Library "Download Adafruit GFX Graphics Library"
 [gfx-docs]: http://learn.adafruit.com/adafruit-gfx-graphics-library/overview "Documentation Adafruit GFX Graphics Library"
-[examples]: https://github.com/markruys/arduino-Max72xxPanel/tree/master/examples "Show Max72xxPanel examples"
+[examples]: https://github.com/kropochev/arduino-Max72xxPanel/tree/master/examples "Show Max72xxPanel examples"
 [hardware]: https://www.google.com/search?q=MAX7219+Red+Dot+Matrix+Module "For kits, google MAX7219 Red Dot Matrix Module"
 [spi]: http://arduino.cc/en/Reference/SPI "SPI library"
 [tickertape]: http://www.youtube.com/watch?v=a8T7ZFeaf1A "Max72xxPanel Arduino library demo (ticker tape)"
