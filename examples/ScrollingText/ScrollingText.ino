@@ -11,6 +11,7 @@ Max72xxPanel matrix = Max72xxPanel(pinCS, numberOfHorizontalDisplays, numberOfVe
 
 String tape = "Hello :)";
 int wait = 20; // In milliseconds
+
 void setup() {
 
   matrix.setIntensity(7); // Use a value between 0 and 15 for brightness
