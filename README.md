@@ -1,17 +1,18 @@
-Max72xxPanel
-============
+# TinkerTech Max72xxPanel Arduino Library
 
 An Arduino library for controlling a canvas of sets of 8x8 LEDs driven by MAX7219 or MAX7221 controllers. [Kits][hardware] sold for below 10 USD.
 
-This is a plugin for Adafruit's core graphics library GFX, providing basic graphics primitives (points, lines, circles, characters, etc.). So besides this library, you need to download and install [Adafruit_GFX][gfx-download], *dated Jul 5th, 2013 or more recent*. 
+This is a plugin for Adafruit's core graphics library GFX, providing basic graphics primitives (points, lines, circles, characters, etc.). So besides this library, you need to download and install [Adafruit_GFX][gfx-download], *dated Jul 5th, 2013 or more recent*.
 
-Written by Mark Ruys, <mark@paracas.nl>, 2013.
+Created by Mark Ruys, <mark@paracas.nl>, 2013.
+
+Edited by Patrick Neggie <patmn@umich.edu> 2018.
 
 
 Installation
 ------------
 
-Place the [Max72xxPanel][download] and [Adafruit_GFX][gfx-download] library folders in your `<arduinosketchfolder>/libraries/` folder. You may need to create the `libraries` subfolder if its your first library. Restart the Arduino IDE. 
+Place the [Max72xxPanel][download] and [Adafruit_GFX][gfx-download] library folders in your `<arduinosketchfolder>/libraries/` folder. You may need to create the `libraries` subfolder if its your first library. Restart the Arduino IDE.
 
 
 Features
@@ -21,6 +22,11 @@ Features
 - Uses the [SPI library][spi] to address the display(s) connected in cascade.
 - Low memory footprint.
 - Fast, no use of NOOP's.
+- Easy usage, one-line function to print text to display
+
+Notable Additions
+-----
+A new function in the format `void printToDisplay(String tape, int wait)` takes in a two parameters: a string of what to print to the display and a integer wait time to change how fast the text scrolls on the display.
 
 Usage
 -----
