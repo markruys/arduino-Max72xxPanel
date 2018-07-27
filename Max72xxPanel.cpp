@@ -103,7 +103,8 @@ void Max72xxPanel::drawPixel(int16_t xx, int16_t yy, uint16_t color) {
 	// Operating in bytes is faster and takes less code to run. We don't
 	// need values above 200, so switch from 16 bit ints to 8 bit unsigned
 	// ints (bytes).
-	int8_t x = xx;
+	// Keep xx as int16_t so fix 16 panel limit
+	int16_t x = xx;
 	byte y = yy;
 	byte tmp;
 
