@@ -99,6 +99,15 @@ public:
    */
   void write();
 
+  /*
+   * Writes a tape to the display in scrolling text format
+   * Parameters:
+   * spacer is space between letters
+   * letter_width is letter width
+   * wait controls the speed of text flow
+   */
+  void printToDisplay(String tape, int wait, int letter_width = 0, int spacer = 0);
+
 private:
   byte SPI_CS; /* SPI chip selection */
 
@@ -115,6 +124,3 @@ private:
 };
 
 #endif	// Max72xxPanel_h
-
-
-
