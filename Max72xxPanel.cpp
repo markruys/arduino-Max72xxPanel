@@ -59,20 +59,7 @@ Max72xxPanel::Max72xxPanel(byte csPin, byte hDisplays, byte vDisplays) : Adafrui
   // Clear the screen
   fillScreen(0);
 
-  // Make sure we are not in test mode
-  spiTransfer(OP_DISPLAYTEST, 0);
-
-  // We need the multiplexer to scan all segments
-  spiTransfer(OP_SCANLIMIT, 7);
-
-  // We don't want the multiplexer to decode segments for us
-  spiTransfer(OP_DECODEMODE, 0);
-
-  // Enable display
-  shutdown(false);
-
-  // Set the brightness to a medium value
-  setIntensity(7);
+  reset();
 }
 
 void Max72xxPanel::setPosition(byte display, byte x, byte y) {
@@ -192,4 +179,22 @@ void Max72xxPanel::spiTransfer(byte opcode, byte data) {
 
 	// Latch the data onto the display(s)
 	digitalWrite(SPI_CS, HIGH);
+}
+
+void Max72xxPanel::reset(){
+  // Make sure we are not in test mode
+  spiTransfer(OP_DISPLAYTEST, 0);
+
+  // We need the multiplexer to scan all segments
+  spiTransfer(OP_SCANLIMIT, 7);
+
+  // We don't want the multiplexer to decode segments for us
+  spiTransfer(OP_DECODEMODE, 0);
+
+  // Enable display
+  shutdown(false);
+
+  // Set the brightness to a medium value
+  setIntensity(7);
+
 }

@@ -99,6 +99,12 @@ public:
    */
   void write();
 
+  /*
+   * Reset the matrix modules to a default state,
+   * performed during initialization
+   */
+  void reset();
+
 private:
   byte SPI_CS; /* SPI chip selection */
 
